@@ -1,12 +1,19 @@
 package com.baeldung.server;
 
 import com.baeldung.api.CabBookingService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.remoting.rmi.RmiServiceExporter;
 
-@SpringBootApplication public class RmiServer {
+
+@SpringBootApplication
+public class RmiServer {
+
+    @Autowired ConfigProperties properties;
 
     @Bean CabBookingService bookingService() {
         return new CabBookingServiceImpl();
@@ -23,7 +30,8 @@ import org.springframework.remoting.rmi.RmiServiceExporter;
         exporter.setServiceInterface(serviceInterface);
         exporter.setService(implementation);
         exporter.setServiceName(serviceInterface.getSimpleName());
-        exporter.setRegistryPort(1099);
+        exporter.setRegistryPort(properties.getPort());
+        System.out.println("Expose a service via RMI. Remote object URL is: " + "rmi://HOST:" + properties.getPort() + "/CabBookingService");
         return exporter;
     }
 
